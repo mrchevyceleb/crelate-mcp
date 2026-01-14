@@ -476,6 +476,594 @@ async def create_task(
     return str(result)
 
 
+# ============================================================================
+# REPORTING TOOLS - ACTIVITY REPORTS
+# ============================================================================
+
+@mcp.tool()
+async def get_activities(
+    limit: int = 50,
+    offset: int = 0,
+    contact_id: str | None = None,
+    candidate_id: str | None = None,
+    job_id: str | None = None,
+    company_id: str | None = None
+) -> str:
+    """Get activity/interaction history with optional filtering.
+
+    Args:
+        limit: Maximum number of activities to return (default: 50)
+        offset: Number of activities to skip for pagination (default: 0)
+        contact_id: Filter by contact ID
+        candidate_id: Filter by candidate ID
+        job_id: Filter by job ID
+        company_id: Filter by company ID
+
+    Returns:
+        JSON string containing activity history (calls, emails, notes, etc.)
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if contact_id:
+        params["contactId"] = contact_id
+    if candidate_id:
+        params["candidateId"] = candidate_id
+    if job_id:
+        params["jobId"] = job_id
+    if company_id:
+        params["companyId"] = company_id
+
+    result = await make_crelate_request("activities", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_activity_count(
+    contact_id: str | None = None,
+    candidate_id: str | None = None,
+    job_id: str | None = None
+) -> str:
+    """Get total count of activities with optional filtering.
+
+    Args:
+        contact_id: Filter by contact ID
+        candidate_id: Filter by candidate ID
+        job_id: Filter by job ID
+
+    Returns:
+        JSON string containing activity count
+    """
+    params = {}
+
+    if contact_id:
+        params["contactId"] = contact_id
+    if candidate_id:
+        params["candidateId"] = candidate_id
+    if job_id:
+        params["jobId"] = job_id
+
+    result = await make_crelate_request("activities/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_contact_history(
+    contact_id: str | None = None,
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get interaction history for contacts.
+
+    Args:
+        contact_id: Specific contact ID (optional)
+        limit: Maximum number of history items to return (default: 50)
+        offset: Number of items to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing contact interaction history
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if contact_id:
+        params["contactId"] = contact_id
+
+    result = await make_crelate_request("contacts/history", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_job_history(
+    job_id: str | None = None,
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get history for jobs/positions.
+
+    Args:
+        job_id: Specific job ID (optional)
+        limit: Maximum number of history items to return (default: 50)
+        offset: Number of items to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing job history
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if job_id:
+        params["jobId"] = job_id
+
+    result = await make_crelate_request("jobs/history", params=params)
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - PIPELINE & APPLICATION REPORTS
+# ============================================================================
+
+@mcp.tool()
+async def get_applications(
+    limit: int = 50,
+    offset: int = 0,
+    job_id: str | None = None,
+    candidate_id: str | None = None,
+    status: str | None = None
+) -> str:
+    """Get job applications with filtering options.
+
+    Args:
+        limit: Maximum number of applications to return (default: 50)
+        offset: Number of applications to skip for pagination (default: 0)
+        job_id: Filter by specific job ID
+        candidate_id: Filter by specific candidate ID
+        status: Filter by application status
+
+    Returns:
+        JSON string containing applications (candidate pipeline data)
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if job_id:
+        params["jobId"] = job_id
+    if candidate_id:
+        params["candidateId"] = candidate_id
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("applications", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_application_count(
+    job_id: str | None = None,
+    status: str | None = None
+) -> str:
+    """Get count of applications with optional filtering.
+
+    Args:
+        job_id: Filter by specific job ID
+        status: Filter by application status
+
+    Returns:
+        JSON string containing application count
+    """
+    params = {}
+
+    if job_id:
+        params["jobId"] = job_id
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("applications/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_job_contacts(
+    job_id: str,
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get all contacts/candidates associated with a job.
+
+    Args:
+        job_id: The job ID (required)
+        limit: Maximum number of contacts to return (default: 50)
+        offset: Number of contacts to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing contacts linked to the job
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request(f"jobs/{job_id}/contacts", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_job_contact_history(
+    job_id: str,
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get interaction history for contacts on a specific job.
+
+    Args:
+        job_id: The job ID (required)
+        limit: Maximum number of history items to return (default: 50)
+        offset: Number of items to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing job-contact interaction history
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request(f"jobs/{job_id}/contacts/history", params=params)
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - PLACEMENT REPORTS
+# ============================================================================
+
+@mcp.tool()
+async def get_placements(
+    limit: int = 50,
+    offset: int = 0,
+    status: str | None = None
+) -> str:
+    """Get placement records (successful hires).
+
+    Args:
+        limit: Maximum number of placements to return (default: 50)
+        offset: Number of placements to skip for pagination (default: 0)
+        status: Filter by placement status
+
+    Returns:
+        JSON string containing placement data including hire dates, salaries, etc.
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("placements", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_placement_info(placement_id: str) -> str:
+    """Get detailed information about a specific placement.
+
+    Args:
+        placement_id: The placement ID
+
+    Returns:
+        JSON string containing detailed placement information
+    """
+    result = await make_crelate_request(f"placements/{placement_id}")
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - SOURCE TRACKING
+# ============================================================================
+
+@mcp.tool()
+async def get_contact_sources(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get all contact sources for tracking where contacts came from.
+
+    Args:
+        limit: Maximum number of sources to return (default: 50)
+        offset: Number of sources to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing contact source data
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("contactsources", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_company_sources(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get all company sources for tracking where companies came from.
+
+    Args:
+        limit: Maximum number of sources to return (default: 50)
+        offset: Number of sources to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing company source data
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("companysources", params=params)
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - USER ACTIVITY & PRODUCTIVITY
+# ============================================================================
+
+@mcp.tool()
+async def get_users(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get all users in the organization.
+
+    Args:
+        limit: Maximum number of users to return (default: 50)
+        offset: Number of users to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing user data for team activity analysis
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("users", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_user_count() -> str:
+    """Get total count of users in the organization.
+
+    Returns:
+        JSON string containing user count
+    """
+    result = await make_crelate_request("users/count")
+    return str(result)
+
+
+@mcp.tool()
+async def get_user_info(user_id: str) -> str:
+    """Get detailed information about a specific user.
+
+    Args:
+        user_id: The user ID
+
+    Returns:
+        JSON string containing user details and activity information
+    """
+    result = await make_crelate_request(f"users/{user_id}")
+    return str(result)
+
+
+@mcp.tool()
+async def get_current_user() -> str:
+    """Get information about the current authenticated user.
+
+    Returns:
+        JSON string containing current user details
+    """
+    result = await make_crelate_request("users/self")
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - FINANCIAL REPORTS
+# ============================================================================
+
+@mcp.tool()
+async def get_invoices(
+    limit: int = 50,
+    offset: int = 0,
+    status: str | None = None
+) -> str:
+    """Get invoice records for financial reporting.
+
+    Args:
+        limit: Maximum number of invoices to return (default: 50)
+        offset: Number of invoices to skip for pagination (default: 0)
+        status: Filter by invoice status
+
+    Returns:
+        JSON string containing invoice data
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("invoices", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_invoice_count(status: str | None = None) -> str:
+    """Get count of invoices with optional status filter.
+
+    Args:
+        status: Filter by invoice status
+
+    Returns:
+        JSON string containing invoice count
+    """
+    params = {}
+
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("invoices/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_invoice_info(invoice_id: str) -> str:
+    """Get detailed information about a specific invoice.
+
+    Args:
+        invoice_id: The invoice ID
+
+    Returns:
+        JSON string containing detailed invoice information
+    """
+    result = await make_crelate_request(f"invoices/{invoice_id}")
+    return str(result)
+
+
+@mcp.tool()
+async def get_payments(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get payment records for financial tracking.
+
+    Args:
+        limit: Maximum number of payments to return (default: 50)
+        offset: Number of payments to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing payment data
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("payments", params=params)
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - AGGREGATE METRICS & COUNTS
+# ============================================================================
+
+@mcp.tool()
+async def get_contact_count(search: str | None = None) -> str:
+    """Get total count of contacts with optional search filter.
+
+    Args:
+        search: Optional search query to filter contacts
+
+    Returns:
+        JSON string containing contact count
+    """
+    params = {}
+
+    if search:
+        params["search"] = search
+
+    result = await make_crelate_request("contacts/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_job_count(status: str | None = None) -> str:
+    """Get total count of jobs with optional status filter.
+
+    Args:
+        status: Filter by job status (e.g., 'open', 'closed')
+
+    Returns:
+        JSON string containing job count
+    """
+    params = {}
+
+    if status:
+        params["status"] = status
+
+    result = await make_crelate_request("jobs/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_company_count(search: str | None = None) -> str:
+    """Get total count of companies with optional search filter.
+
+    Args:
+        search: Optional search query to filter companies
+
+    Returns:
+        JSON string containing company count
+    """
+    params = {}
+
+    if search:
+        params["search"] = search
+
+    result = await make_crelate_request("companies/count", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_organization_info() -> str:
+    """Get information about the current organization.
+
+    Returns:
+        JSON string containing organization details and settings
+    """
+    result = await make_crelate_request("organizations/self")
+    return str(result)
+
+
+# ============================================================================
+# REPORTING TOOLS - TAG & WORKFLOW ANALYSIS
+# ============================================================================
+
+@mcp.tool()
+async def get_tags(
+    limit: int = 50,
+    offset: int = 0,
+    category: str | None = None
+) -> str:
+    """Get tags for categorization and reporting.
+
+    Args:
+        limit: Maximum number of tags to return (default: 50)
+        offset: Number of tags to skip for pagination (default: 0)
+        category: Filter by tag category
+
+    Returns:
+        JSON string containing tag data
+    """
+    params = {"limit": limit, "offset": offset}
+
+    if category:
+        params["category"] = category
+
+    result = await make_crelate_request("tags", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_tag_categories(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get tag categories for organizational reporting.
+
+    Args:
+        limit: Maximum number of categories to return (default: 50)
+        offset: Number of categories to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing tag category data
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("tagcategories", params=params)
+    return str(result)
+
+
+@mcp.tool()
+async def get_workflow_statuses(
+    limit: int = 50,
+    offset: int = 0
+) -> str:
+    """Get workflow statuses for pipeline stage analysis.
+
+    Args:
+        limit: Maximum number of statuses to return (default: 50)
+        offset: Number of statuses to skip for pagination (default: 0)
+
+    Returns:
+        JSON string containing workflow status data
+    """
+    params = {"limit": limit, "offset": offset}
+    result = await make_crelate_request("workflowstatuses", params=params)
+    return str(result)
+
+
 if __name__ == "__main__":
     # Run with stdio transport for Claude Desktop integration
     mcp.run(transport="stdio")

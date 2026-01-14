@@ -24,13 +24,23 @@ cp .env.example .env
 
 ## Features
 
-Comprehensive API coverage for:
+### Core CRUD Operations
 - **Contacts**: List, get, create, update contacts
 - **Candidates**: List, get, create candidates
 - **Jobs**: List, get, create job positions
 - **Companies**: List, get, create companies
 - **Notes**: Create notes and attach to records
 - **Tasks**: Create tasks and attach to records
+
+### Comprehensive Reporting & Analytics (33 tools)
+- **Activity Reports**: Track interactions, touchpoints, and engagement history
+- **Pipeline Reports**: Analyze candidate flow through job pipelines
+- **Placement Reports**: Track successful hires and metrics
+- **Source Tracking**: Identify where candidates and contacts originated
+- **User Activity**: Monitor team productivity and activity
+- **Financial Reports**: Track invoicing and payment data
+- **Aggregate Metrics**: High-level counts and organization stats
+- **Workflow Analysis**: Analyze categorization and pipeline stages
 
 ## Prerequisites
 
@@ -130,6 +140,67 @@ Edit your MCP configuration file at `C:\Users\mtjoh\.claude.json`:
 
 - `create_note(body, contact_id, candidate_id, company_id, job_id)` - Create note and attach to record
 - `create_task(body, due_date, contact_id, candidate_id, company_id, job_id)` - Create task and attach to record
+
+### Reporting & Analytics Tools
+
+#### Activity Reports
+Track interactions, touchpoints, and engagement history:
+
+- `get_activities(limit, offset, activity_type)` - List all activities with optional type filter
+- `get_activity_count(activity_type)` - Get total count of activities by type
+- `get_contact_history(contact_id, limit, offset)` - Get complete activity history for a contact
+- `get_job_history(job_id, limit, offset)` - Get complete activity history for a job
+
+#### Pipeline & Application Reports
+Analyze candidate flow through job pipelines:
+
+- `get_applications(job_id, limit, offset)` - List all applications for a specific job
+- `get_application_count(job_id, status)` - Count applications by job and optional status
+- `get_job_contacts(job_id, limit, offset)` - List all contacts associated with a job
+- `get_job_contact_history(job_id, contact_id, limit, offset)` - Get interaction history between job and contact
+
+#### Placement Reports
+Track successful hires and placement metrics:
+
+- `get_placements(limit, offset, start_date, end_date)` - List placements with date range filtering
+- `get_placement_info(placement_id)` - Get detailed information about a specific placement
+
+#### Source Tracking
+Identify where candidates and contacts originated:
+
+- `get_contact_sources(limit, offset)` - List all contact sources with usage stats
+- `get_company_sources(limit, offset)` - List all company sources with usage stats
+
+#### User Activity & Productivity
+Monitor team member activity and productivity:
+
+- `get_users(limit, offset)` - List all users in the organization
+- `get_user_count()` - Get total count of active users
+- `get_user_info(user_id)` - Get detailed information about a specific user
+- `get_current_user()` - Get information about the authenticated user
+
+#### Financial Reports
+Track invoicing and payment data:
+
+- `get_invoices(limit, offset, status)` - List invoices with optional status filter
+- `get_invoice_count(status)` - Count invoices by status
+- `get_invoice_info(invoice_id)` - Get detailed information about a specific invoice
+- `get_payments(invoice_id, limit, offset)` - List payments for a specific invoice
+
+#### Aggregate Metrics & Organization
+High-level counts and organization information:
+
+- `get_contact_count(search)` - Get total count of contacts with optional search filter
+- `get_job_count(status)` - Get total count of jobs with optional status filter
+- `get_company_count(search)` - Get total count of companies with optional search filter
+- `get_organization_info()` - Get information about the Crelate organization/account
+
+#### Tags & Workflow Analysis
+Analyze categorization and pipeline stages:
+
+- `get_tags(limit, offset, entity_type)` - List tags with optional entity type filter
+- `get_tag_categories(limit, offset)` - List all tag categories
+- `get_workflow_statuses(entity_type, limit, offset)` - List workflow statuses by entity type
 
 ## Usage Examples
 
