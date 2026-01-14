@@ -1,6 +1,26 @@
 # Crelate MCP Server
 
-Model Context Protocol (MCP) server for the Crelate ATS/CRM API. Enables Claude Code to interact with Crelate recruiting and staffing workflows.
+Model Context Protocol (MCP) server for the Crelate ATS/CRM API. Enables Claude Code and other MCP clients to interact with Crelate recruiting and staffing workflows.
+
+**GitHub:** https://github.com/mrchevyceleb/crelate-mcp
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/mrchevyceleb/crelate-mcp.git
+cd crelate-mcp
+
+# Install dependencies
+uv venv
+uv pip install mcp httpx python-dotenv
+
+# Configure your API key
+cp .env.example .env
+# Edit .env and add your CRELATE_API_KEY
+
+# Add to Claude Code (see Configuration section below)
+```
 
 ## Features
 
